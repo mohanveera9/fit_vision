@@ -20,6 +20,7 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
   late Animation<double> _progressAnimation;
 
   final List<TestResultModel> _testResults = MockData.mockTestResults;
+  bool _showHiddenTests = false; // Toggle for showing isVisible: false tests
 
   @override
   void initState() {
@@ -58,8 +59,8 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
       case 'weight':
         context.go('/tests/weight');
         break;
-      case 'pushups':
-        context.go('/tests/pushups/tutorial');
+      case 'verticaljump':
+        context.go('/tests/verticaljump/tutorial');
         break;
       case 'situps':
         context.go('/tests/situps/tutorial');
@@ -67,14 +68,20 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
       case 'running':
         context.go('/tests/running/tutorial');
         break;
-      case 'flexibility':
-        context.go('/tests/flexibility/tutorial');
+      case 'shuttlerun':
+        context.go('/tests/shuttlerun/tutorial');
         break;
     }
   }
 
   void _viewTestResults(String testId) {
     context.go('/tests/$testId/results');
+  }
+
+  void _toggleVisibilityMode() {
+    setState(() {
+      _showHiddenTests = !_showHiddenTests;
+    });
   }
 
   @override
@@ -96,6 +103,9 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
             // Tests Grid
             _buildTestsGrid(),
 
+            // Change Height and Weight Section
+            _buildChangeHeightWeightSection(),
+
             const SizedBox(height: AppDimensions.spacing24),
           ],
         ),
@@ -104,10 +114,8 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
   }
 
   Widget _buildProgressSection() {
-    final completedTests = _testResults
-        .where((test) => test.isCompleted)
-        .length;
-    final totalTests = _testResults.length;
+    final completedTests = 2;
+    final totalTests = 4;
 
     return Container(
       margin: const EdgeInsets.all(AppDimensions.spacing16),
@@ -213,14 +221,35 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
   }
 
   Widget _buildTestsGrid() {
-    // Filter visible test results by definition visibility
-    final visibleTests = _testResults.where((test) {
+    // Filter tests based on visibility mode
+    final filteredTests = _testResults.where((test) {
       final testDefinition = MockData.mockTestDefinitions.firstWhere(
         (def) => def['id'] == test.testId.split('_')[0],
         orElse: () => {},
       );
-      return testDefinition.isNotEmpty && testDefinition['isVisible'] == true;
+
+      if (testDefinition.isEmpty) return false;
+
+      // If showing hidden tests, show only isVisible: false tests
+      // Otherwise, show only isVisible: true tests
+      return _showHiddenTests
+          ? testDefinition['isVisible'] == false
+          : testDefinition['isVisible'] == true;
     }).toList();
+
+    // Sort tests: height and weight tests go to the end
+    filteredTests.sort((a, b) {
+      final aIsHeightWeight =
+          a.testId.contains('height') || a.testId.contains('weight');
+      final bIsHeightWeight =
+          b.testId.contains('height') || b.testId.contains('weight');
+
+      if (aIsHeightWeight && !bIsHeightWeight) return 1;
+      if (!aIsHeightWeight && bIsHeightWeight) return -1;
+
+      // For non-height/weight tests, maintain original order
+      return 0;
+    });
 
     return Padding(
       padding: const EdgeInsets.all(AppDimensions.spacing16),
@@ -233,9 +262,9 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
           crossAxisSpacing: AppDimensions.spacing16,
           mainAxisSpacing: AppDimensions.spacing16,
         ),
-        itemCount: visibleTests.length,
+        itemCount: filteredTests.length,
         itemBuilder: (context, index) {
-          final test = visibleTests[index];
+          final test = filteredTests[index];
           final testDefinition = MockData.mockTestDefinitions.firstWhere(
             (def) => def['id'] == test.testId.split('_')[0],
           );
@@ -452,5 +481,44 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
       default:
         return AppColors.onSurfaceVariant;
     }
+  }
+
+  Widget _buildChangeHeightWeightSection() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      child: GestureDetector(
+        onTap: _toggleVisibilityMode,
+        child: Container(
+          
+          child: Row(
+            children: [
+              Icon(
+                _showHiddenTests ? Icons.visibility_off : Icons.edit,
+                color: _showHiddenTests ? Colors.red : Colors.blue,
+                size: 24,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  _showHiddenTests
+                      ? 'Show Fitness Tests'
+                      : 'Edit Height & Weight',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: _showHiddenTests ? Colors.red : Colors.blue,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: _showHiddenTests ? Colors.red : Colors.blue,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
