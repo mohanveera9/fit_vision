@@ -83,7 +83,7 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
     // Simulate registration completion
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        context.go('/education');
+        context.go('/home');
       }
     });
   }
@@ -186,16 +186,6 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
                 onPressed: _isLoading ? null : _completeRegistration,
                 isLoading: _isLoading,
                 type: ButtonType.primary,
-              ),
-
-              const SizedBox(height: AppDimensions.spacing24),
-
-              // Skip Button
-              CustomButton(
-                text: 'Explore App First',
-                onPressed: _isLoading ? null : _completeRegistration,
-                type: ButtonType.text,
-                textColor: AppColors.onSurfaceVariant,
               ),
             ],
           ),

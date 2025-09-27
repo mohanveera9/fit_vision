@@ -18,26 +18,28 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
     with TickerProviderStateMixin {
   late AnimationController _progressController;
   late Animation<double> _progressAnimation;
-  
+
   final List<TestResultModel> _testResults = MockData.mockTestResults;
 
   @override
   void initState() {
     super.initState();
-    
+
     _progressController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
-    final completedTests = _testResults.where((test) => test.isCompleted).length;
-    _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: completedTests / _testResults.length,
-    ).animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.easeInOut,
-    ));
+    final completedTests = _testResults
+        .where((test) => test.isCompleted)
+        .length;
+    _progressAnimation =
+        Tween<double>(
+          begin: 0.0,
+          end: completedTests / _testResults.length,
+        ).animate(
+          CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
+        );
 
     _progressController.forward();
   }
@@ -90,10 +92,10 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
           children: [
             // Progress Section
             _buildProgressSection(),
-            
+
             // Tests Grid
             _buildTestsGrid(),
-            
+
             const SizedBox(height: AppDimensions.spacing24),
           ],
         ),
@@ -102,9 +104,11 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
   }
 
   Widget _buildProgressSection() {
-    final completedTests = _testResults.where((test) => test.isCompleted).length;
+    final completedTests = _testResults
+        .where((test) => test.isCompleted)
+        .length;
     final totalTests = _testResults.length;
-    
+
     return Container(
       margin: const EdgeInsets.all(AppDimensions.spacing16),
       padding: const EdgeInsets.all(AppDimensions.spacing24),
@@ -149,7 +153,9 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
               return LinearProgressIndicator(
                 value: _progressAnimation.value,
                 backgroundColor: AppColors.surfaceVariant,
-                valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  AppColors.primary,
+                ),
                 minHeight: 8,
               );
             },
@@ -207,6 +213,15 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
   }
 
   Widget _buildTestsGrid() {
+    // Filter visible test results by definition visibility
+    final visibleTests = _testResults.where((test) {
+      final testDefinition = MockData.mockTestDefinitions.firstWhere(
+        (def) => def['id'] == test.testId.split('_')[0],
+        orElse: () => {},
+      );
+      return testDefinition.isNotEmpty && testDefinition['isVisible'] == true;
+    }).toList();
+
     return Padding(
       padding: const EdgeInsets.all(AppDimensions.spacing16),
       child: GridView.builder(
@@ -218,13 +233,13 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
           crossAxisSpacing: AppDimensions.spacing16,
           mainAxisSpacing: AppDimensions.spacing16,
         ),
-        itemCount: _testResults.length,
+        itemCount: visibleTests.length,
         itemBuilder: (context, index) {
-          final test = _testResults[index];
+          final test = visibleTests[index];
           final testDefinition = MockData.mockTestDefinitions.firstWhere(
             (def) => def['id'] == test.testId.split('_')[0],
           );
-          
+
           return AnimationConfiguration.staggeredGrid(
             position: index,
             duration: const Duration(milliseconds: 600),
@@ -240,39 +255,44 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
     );
   }
 
-  Widget _buildTestCard(TestResultModel test, Map<String, dynamic> testDefinition) {
+  Widget _buildTestCard(
+    TestResultModel test,
+    Map<String, dynamic> testDefinition,
+  ) {
     final isCompleted = test.isCompleted;
     final isAvailable = test.isCompleted || _canStartTest(test);
-    
+
     return GestureDetector(
-      onTap: isAvailable 
-          ? (isCompleted 
-              ? () => _viewTestResults(test.testId.split('_')[0])
-              : () => _navigateToTest(test.testId.split('_')[0]))
+      onTap: isAvailable
+          ? (isCompleted
+                ? () => _viewTestResults(test.testId.split('_')[0])
+                : () => _navigateToTest(test.testId.split('_')[0]))
           : null,
       child: Container(
         decoration: BoxDecoration(
-          color: isCompleted 
+          color: isCompleted
               ? AppColors.success.withOpacity(0.1)
-              : isAvailable 
-                  ? AppColors.surface 
-                  : AppColors.surfaceVariant.withOpacity(0.5),
+              : isAvailable
+              ? AppColors.surface
+              : AppColors.surfaceVariant.withOpacity(0.5),
           borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
           border: Border.all(
-            color: isCompleted 
+            color: isCompleted
                 ? AppColors.success
-                : isAvailable 
-                    ? AppColors.outline
-                    : AppColors.outline.withOpacity(0.3),
+                : isAvailable
+                ? AppColors.outline
+                : AppColors.outline.withOpacity(0.3),
             width: isCompleted ? 2 : 1,
           ),
-          boxShadow: isAvailable ? [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ] : null,
+          boxShadow: isAvailable
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.spacing16),
@@ -288,29 +308,21 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
                     height: 40,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isCompleted 
-                          ? AppColors.success
-                          : isAvailable 
-                              ? AppColors.primary.withOpacity(0.1)
-                              : AppColors.surfaceVariant,
+                      color: isAvailable
+                          ? AppColors.primary.withOpacity(0.1)
+                          : AppColors.surfaceVariant,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: isCompleted
-                        ? const Icon(
-                            Icons.check,
-                            color: AppColors.onError,
-                            size: 20,
-                          )
-                        : Text(
-                            testDefinition['icon'],
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: isAvailable 
-                                  ? AppColors.primary 
-                                  : AppColors.onSurfaceVariant,
-                            ),
-                          ),
+                    child: Text(
+                      testDefinition['icon'],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: isAvailable
+                            ? AppColors.primary
+                            : AppColors.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                   if (isCompleted)
                     Container(
@@ -327,38 +339,38 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
                     ),
                 ],
               ),
-              
+
               const Spacer(),
-              
+
               // Title
               Text(
                 test.testName,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: isAvailable 
-                      ? AppColors.onSurface 
+                  color: isAvailable
+                      ? AppColors.onSurface
                       : AppColors.onSurfaceVariant,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing4),
-              
+
               // Duration
               Text(
                 testDefinition['duration'],
                 style: TextStyle(
                   fontSize: 12,
-                  color: isAvailable 
-                      ? AppColors.onSurfaceVariant 
+                  color: isAvailable
+                      ? AppColors.onSurfaceVariant
                       : AppColors.onSurfaceVariant.withOpacity(0.5),
                 ),
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing8),
-              
+
               // Status/Score
               if (isCompleted) ...[
                 Container(
@@ -368,7 +380,9 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.success.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusSmall,
+                    ),
                   ),
                   child: Text(
                     'Score: ${test.score}',
@@ -386,8 +400,12 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
                     vertical: AppDimensions.spacing4,
                   ),
                   decoration: BoxDecoration(
-                    color: _getDifficultyColor(testDefinition['difficulty']).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+                    color: _getDifficultyColor(
+                      testDefinition['difficulty'],
+                    ).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusSmall,
+                    ),
                   ),
                   child: Text(
                     isAvailable ? 'Ready' : 'Locked',
@@ -411,11 +429,15 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
     if (test.testId.contains('height') || test.testId.contains('weight')) {
       return true;
     }
-    
+
     // Other tests require height and weight to be completed first
-    final heightCompleted = _testResults.any((t) => t.testId.contains('height') && t.isCompleted);
-    final weightCompleted = _testResults.any((t) => t.testId.contains('weight') && t.isCompleted);
-    
+    final heightCompleted = _testResults.any(
+      (t) => t.testId.contains('height') && t.isCompleted,
+    );
+    final weightCompleted = _testResults.any(
+      (t) => t.testId.contains('weight') && t.isCompleted,
+    );
+
     return heightCompleted && weightCompleted;
   }
 

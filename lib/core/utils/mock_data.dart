@@ -55,7 +55,7 @@ class MockData {
       score: 175,
       percentile: 85.5,
       completedAt: DateTime.now().subtract(const Duration(days: 2)),
-      status: TestStatus.completed,
+      status: TestStatus.notStarted,
       details: {'height': 175, 'unit': 'cm'},
       duration: const Duration(minutes: 2),
     ),
@@ -66,13 +66,13 @@ class MockData {
       score: 70,
       percentile: 72.3,
       completedAt: DateTime.now().subtract(const Duration(days: 2)),
-      status: TestStatus.completed,
+      status: TestStatus.notStarted,
       details: {'weight': 70, 'unit': 'kg'},
       duration: const Duration(minutes: 1),
     ),
     TestResultModel(
       testId: 'pushups_1',
-      testName: 'Push-ups Test',
+      testName: 'Vertical Jump Test',
       testType: TestType.pushUps,
       score: 45,
       percentile: 90.2,
@@ -88,7 +88,7 @@ class MockData {
       score: 0,
       percentile: 0,
       completedAt: DateTime.now(),
-      status: TestStatus.notStarted,
+      status: TestStatus.completed,
       details: {},
     ),
     TestResultModel(
@@ -227,6 +227,7 @@ class MockData {
       ],
       'duration': '2 minutes',
       'difficulty': 'Easy',
+      'isVisible': false
     },
     {
       'id': 'weight',
@@ -241,10 +242,11 @@ class MockData {
       ],
       'duration': '1 minute',
       'difficulty': 'Easy',
+      'isVisible': false,
     },
     {
       'id': 'pushups',
-      'name': 'Push-ups Test',
+      'name': 'Vertical Jump Test',
       'description': 'Complete as many push-ups as possible in 60 seconds',
       'icon': '💪',
       'instructions': [
@@ -255,6 +257,7 @@ class MockData {
       ],
       'duration': '2 minutes',
       'difficulty': 'Medium',
+      'isVisible': true,
     },
     {
       'id': 'situps',
@@ -269,6 +272,7 @@ class MockData {
       ],
       'duration': '2 minutes',
       'difficulty': 'Medium',
+      'isVisible': true,
     },
     {
       'id': 'running',
@@ -283,10 +287,11 @@ class MockData {
       ],
       'duration': '15 minutes',
       'difficulty': 'Hard',
+      'isVisible': true,
     },
     {
       'id': 'flexibility',
-      'name': 'Flexibility Test',
+      'name': 'Shuttle run Test',
       'description': 'Measure your flexibility using the sit-and-reach test',
       'icon': '🤸',
       'instructions': [
@@ -297,6 +302,7 @@ class MockData {
       ],
       'duration': '3 minutes',
       'difficulty': 'Easy',
+      'isVisible':true,
     },
   ];
 

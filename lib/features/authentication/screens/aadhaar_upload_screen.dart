@@ -37,7 +37,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
             children: [
               // Progress Indicator
               _buildProgressIndicator(),
-              
+
               const SizedBox(height: AppDimensions.spacing32),
 
               // Title
@@ -49,9 +49,9 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
                   color: AppColors.onSurface,
                 ),
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing8),
-              
+
               const Text(
                 'Upload a clear photo of your Aadhaar card for verification',
                 style: TextStyle(
@@ -59,37 +59,27 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
                   color: AppColors.onSurfaceVariant,
                 ),
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing32),
 
               // Upload Area
               _buildUploadArea(),
-              
+
               const SizedBox(height: AppDimensions.spacing32),
 
               // Instructions
               _buildInstructions(),
-              
+
               const SizedBox(height: AppDimensions.spacing32),
 
               // Requirements
               _buildRequirements(),
-              
+
               const SizedBox(height: AppDimensions.spacing40),
 
               // Action Buttons
               Row(
                 children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: 'Skip for Now',
-                      onPressed: _skipVerification,
-                      type: ButtonType.outlined,
-                    ),
-                  ),
-                  
-                  const SizedBox(width: AppDimensions.spacing16),
-                  
                   Expanded(
                     child: CustomButton(
                       text: 'Continue',
@@ -144,9 +134,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
 
   Widget _buildUploadArea() {
     return DottedBorder(
-      color: _uploadedImagePath != null 
-          ? AppColors.success 
-          : AppColors.outline,
+      color: _uploadedImagePath != null ? AppColors.success : AppColors.outline,
       strokeWidth: 2,
       dashPattern: const [8, 4],
       borderType: BorderType.RRect,
@@ -263,10 +251,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
             const SizedBox(height: AppDimensions.spacing8),
             const Text(
               'Camera or Gallery',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.onSurfaceVariant,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.onSurfaceVariant),
             ),
           ],
         ),
@@ -286,11 +271,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline,
-                color: AppColors.primary,
-                size: 20,
-              ),
+              Icon(Icons.info_outline, color: AppColors.primary, size: 20),
               SizedBox(width: AppDimensions.spacing8),
               Text(
                 'Instructions',
@@ -371,10 +352,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
           children: [
             const Text(
               'Select Image Source',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppDimensions.spacing24),
             Row(
@@ -424,18 +402,11 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              size: 32,
-              color: AppColors.primary,
-            ),
+            Icon(icon, size: 32, color: AppColors.primary),
             const SizedBox(height: AppDimensions.spacing8),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ],
         ),
