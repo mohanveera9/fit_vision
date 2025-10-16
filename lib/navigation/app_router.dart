@@ -5,6 +5,8 @@ import '../features/authentication/screens/splash_screen.dart';
 import '../features/authentication/screens/welcome_screen.dart';
 import '../features/authentication/screens/name_entry_screen.dart';
 import '../features/authentication/screens/aadhaar_upload_screen.dart';
+import '../features/authentication/screens/face_verification_screen.dart';
+import '../features/authentication/screens/height_weight_input_screen.dart';
 import '../features/authentication/screens/profile_confirmation_screen.dart';
 import '../features/dashboard/screens/education_hub_screen.dart';
 import '../features/education/screens/module_detail_screen.dart';
@@ -57,6 +59,16 @@ class AppRouter {
         builder: (context, state) => const AadhaarUploadScreen(),
       ),
       GoRoute(
+        path: '/register/face-verification',
+        name: 'faceVerification',
+        builder: (context, state) => const FaceVerificationScreen(),
+      ),
+      GoRoute(
+        path: '/register/height-weight',
+        name: 'heightWeightInput',
+        builder: (context, state) => const HeightWeightInputScreen(),
+      ),
+      GoRoute(
         path: '/register/confirm',
         name: 'profileConfirmation',
         builder: (context, state) => const ProfileConfirmationScreen(),
@@ -91,7 +103,10 @@ class AppRouter {
             builder: (context, state) {
               final moduleId = state.pathParameters['moduleId']!;
               final lessonId = state.pathParameters['lessonId']!;
-              return LessonContentScreen(moduleId: moduleId, lessonId: lessonId);
+              return LessonContentScreen(
+                moduleId: moduleId,
+                lessonId: lessonId,
+              );
             },
           ),
           GoRoute(

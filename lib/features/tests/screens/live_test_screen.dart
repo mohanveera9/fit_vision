@@ -3,9 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:camera/camera.dart';
 import 'dart:async';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_dimensions.dart';
+import '../../../shared/models/test_result_model.dart';
 import '../../../core/utils/mock_data.dart';
-import '../../../shared/widgets/custom_button.dart';
 
 enum TestPhase {
   positioning,
@@ -13,7 +12,7 @@ enum TestPhase {
   userConfirmed,
   testInstructions,
   testing,
-  completed
+  completed,
 }
 
 class LiveTestScreen extends StatefulWidget {
@@ -44,20 +43,19 @@ class _LiveTestScreenState extends State<LiveTestScreen>
   bool _isVideoRecording = false;
 
   TestPhase _currentPhase = TestPhase.positioning;
-  
-  int _testDuration = 0;
+
   int _elapsedTime = 0;
   int _correctCount = 0;
   int _incorrectCount = 0;
   int _totalAttempts = 0;
-  
+
   String _currentMessage = "Position yourself in front of the camera";
   String _instructionText = "Stand in the center of the frame";
 
   @override
   void initState() {
     super.initState();
-    
+
     _pulseController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -77,9 +75,10 @@ class _LiveTestScreenState extends State<LiveTestScreen>
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _scanAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _scanController, curve: Curves.linear),
-    );
+    _scanAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _scanController, curve: Curves.linear));
 
     _initializeCamera();
   }
@@ -87,7 +86,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
   Future<void> _initializeCamera() async {
     try {
       _cameras = await availableCameras();
-      
+
       if (_cameras.isNotEmpty) {
         // Find back camera, fallback to first available camera
         CameraDescription selectedCamera = _cameras.firstWhere(
@@ -102,7 +101,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
         );
 
         await _cameraController!.initialize();
-        
+
         if (mounted) {
           setState(() {
             _isCameraInitialized = true;
@@ -118,8 +117,8 @@ class _LiveTestScreenState extends State<LiveTestScreen>
   }
 
   Future<void> _startVideoRecording() async {
-    if (_cameraController != null && 
-        _cameraController!.value.isInitialized && 
+    if (_cameraController != null &&
+        _cameraController!.value.isInitialized &&
         !_cameraController!.value.isRecordingVideo) {
       try {
         await _cameraController!.startVideoRecording();
@@ -134,7 +133,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
   }
 
   Future<void> _stopVideoRecording() async {
-    if (_cameraController != null && 
+    if (_cameraController != null &&
         _cameraController!.value.isRecordingVideo) {
       try {
         final XFile videoFile = await _cameraController!.stopVideoRecording();
@@ -209,12 +208,22 @@ class _LiveTestScreenState extends State<LiveTestScreen>
     setState(() {
       _currentPhase = TestPhase.testInstructions;
       _currentMessage = "Get ready for Sit-ups Test";
-      _instructionText = "Lie down and prepare to start";
+      _instructionText =
+          "Lie down with knees bent, hands behind head. Test starts in 3 seconds.";
     });
 
-    // Show instructions for 3 seconds then start test
-    _phaseTimer = Timer(const Duration(seconds: 3), () {
-      _startTest();
+    // Countdown before starting test
+    int countdown = 3;
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      countdown--;
+      if (countdown > 0) {
+        setState(() {
+          _instructionText = "Test starts in $countdown seconds...";
+        });
+      } else {
+        timer.cancel();
+        _startTest();
+      }
     });
   }
 
@@ -222,7 +231,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
     setState(() {
       _currentPhase = TestPhase.testing;
       _currentMessage = "Performing Sit-ups";
-      _instructionText = "Keep your form correct";
+      _instructionText = "Maintain proper form throughout the test";
       _elapsedTime = 0;
     });
 
@@ -239,33 +248,47 @@ class _LiveTestScreenState extends State<LiveTestScreen>
 
   void _startCountingSimulation() {
     int countInterval = 0;
-    
-    _countTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+
+    _countTimer = Timer.periodic(const Duration(milliseconds: 1500), (timer) {
       countInterval++;
-      
-      if (countInterval <= 3) {
-        // First 3 counts are correct
+
+      if (countInterval <= 4) {
+        // First 4 counts are correct
         setState(() {
           _correctCount++;
           _totalAttempts++;
-          _instructionText = "Good form! Count: $_correctCount";
+          _instructionText = "Excellent form! Count: $_correctCount";
         });
-      } else if (countInterval == 4) {
-        // 4th attempt is incorrect
+      } else if (countInterval == 5) {
+        // 5th attempt is incorrect
         setState(() {
           _incorrectCount++;
           _totalAttempts++;
-          _instructionText = "Incorrect form detected!";
+          _instructionText = "Keep your core tight!";
         });
-      } else if (countInterval <= 7) {
+      } else if (countInterval <= 8) {
         // Next 3 are correct again
         setState(() {
           _correctCount++;
           _totalAttempts++;
-          _instructionText = "Good form! Count: $_correctCount";
+          _instructionText = "Great technique! Count: $_correctCount";
+        });
+      } else if (countInterval == 9) {
+        // Another incorrect attempt
+        setState(() {
+          _incorrectCount++;
+          _totalAttempts++;
+          _instructionText = "Focus on your breathing!";
+        });
+      } else if (countInterval <= 12) {
+        // Final correct attempts
+        setState(() {
+          _correctCount++;
+          _totalAttempts++;
+          _instructionText = "Perfect! Count: $_correctCount";
         });
       } else {
-        // Stop after 7 total attempts
+        // Stop after 12 total attempts (about 18 seconds)
         _completeTest();
       }
     });
@@ -274,20 +297,107 @@ class _LiveTestScreenState extends State<LiveTestScreen>
   void _completeTest() {
     _countTimer?.cancel();
     _testTimer?.cancel();
-    
+
     setState(() {
       _currentPhase = TestPhase.completed;
-      _currentMessage = "Test Completed!";
-      _instructionText = "Processing results...";
+      _currentMessage = "Test Completed Successfully!";
+      _instructionText = "Analyzing your performance...";
     });
 
     // Stop video recording
     _stopVideoRecording();
 
+    // Create new test result with actual counts
+    _createTestResult();
+
     // Show completion for 2 seconds then go to results
     Timer(const Duration(seconds: 2), () {
       _goToResults();
     });
+  }
+
+  void _createTestResult() {
+    // Calculate score based on correct count
+    int score = _correctCount;
+
+    // Calculate percentile based on score (simplified calculation)
+    double percentile = _calculatePercentile(score);
+
+    // Get test definition
+    final testDefinition = MockData.mockTestDefinitions.firstWhere(
+      (test) => test['id'] == widget.testId,
+      orElse: () => MockData.mockTestDefinitions.first,
+    );
+
+    // Create new test result
+    final newTestResult = TestResultModel(
+      testId: '${widget.testId}_${DateTime.now().millisecondsSinceEpoch}',
+      testName: testDefinition['name'],
+      testType: _getTestType(),
+      score: score,
+      percentile: percentile,
+      completedAt: DateTime.now(),
+      status: TestStatus.completed,
+      details: {
+        'count': score,
+        'correct': _correctCount,
+        'incorrect': _incorrectCount,
+        'totalAttempts': _totalAttempts,
+        'duration': '${_elapsedTime}s',
+      },
+      duration: Duration(seconds: _elapsedTime),
+    );
+
+    // Add to mock data (in a real app, this would be saved to a database)
+    MockData.mockTestResults.add(newTestResult);
+  }
+
+  TestType _getTestType() {
+    switch (widget.testId) {
+      case 'situps':
+        return TestType.sitUps;
+      case 'pushups':
+        return TestType.pushUps;
+      case 'running':
+        return TestType.running;
+      case 'flexibility':
+        return TestType.flexibility;
+      case 'height':
+        return TestType.height;
+      case 'weight':
+        return TestType.weight;
+      default:
+        return TestType.sitUps;
+    }
+  }
+
+  double _calculatePercentile(int score) {
+    // Simplified percentile calculation based on test type
+    switch (widget.testId) {
+      case 'situps':
+        if (score >= 30) return 95.0;
+        if (score >= 25) return 85.0;
+        if (score >= 20) return 70.0;
+        if (score >= 15) return 55.0;
+        if (score >= 10) return 40.0;
+        return 25.0;
+      case 'pushups':
+        if (score >= 40) return 95.0;
+        if (score >= 30) return 85.0;
+        if (score >= 20) return 70.0;
+        if (score >= 15) return 55.0;
+        if (score >= 10) return 40.0;
+        return 25.0;
+      case 'shuttlerun':
+        if (score >= 10) return 95.0;
+        if (score >= 8) return 85.0;
+        if (score >= 6) return 70.0;
+        if (score >= 4) return 55.0;
+        if (score >= 2) return 40.0;
+        return 25.0;
+      default:
+        return 50.0;
+    }
   }
 
   void _goToResults() {
@@ -302,19 +412,19 @@ class _LiveTestScreenState extends State<LiveTestScreen>
         children: [
           // Camera Preview or Loading
           _buildCameraPreview(),
-          
+
           // Recording Indicator
           _buildRecordingIndicator(),
-          
+
           // Back Button
           _buildBackButton(),
-          
-          // Scan Overlay
+
+          // Scan Overlay (only during scanning phase)
           if (_currentPhase == TestPhase.scanning) _buildScanOverlay(),
-          
+
           // Main Content
           _buildMainContent(),
-          
+
           // Stats Display (during testing)
           if (_currentPhase == TestPhase.testing) _buildStatsDisplay(),
         ],
@@ -352,7 +462,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
           height: double.infinity,
           child: CameraPreview(_cameraController!),
         ),
-        
+
         // Overlay elements on top of camera
         Container(
           width: double.infinity,
@@ -399,9 +509,11 @@ class _LiveTestScreenState extends State<LiveTestScreen>
                     },
                   ),
                 ),
-              
-              // User detection indicator (after positioning)
-              if (_currentPhase != TestPhase.positioning && _currentPhase != TestPhase.completed)
+
+              // User detection indicator (after positioning, but not during testing)
+              if (_currentPhase != TestPhase.positioning &&
+                  _currentPhase != TestPhase.testing &&
+                  _currentPhase != TestPhase.completed)
                 Center(
                   child: Container(
                     width: 200,
@@ -425,7 +537,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
 
   Widget _buildRecordingIndicator() {
     if (!_isVideoRecording) return const SizedBox.shrink();
-    
+
     return Positioned(
       top: 60,
       right: 20,
@@ -505,33 +617,34 @@ class _LiveTestScreenState extends State<LiveTestScreen>
       right: 20,
       child: Column(
         children: [
-          // Phase Indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: _getPhaseColor().withOpacity(0.9),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _getPhaseColor(), width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+          // Phase Indicator (hidden during testing)
+          if (_currentPhase != TestPhase.testing)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: _getPhaseColor().withOpacity(0.9),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: _getPhaseColor(), width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                _getPhaseText(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            ),
-            child: Text(
-              _getPhaseText(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          
-          const SizedBox(height: 20),
-          
+
+          if (_currentPhase != TestPhase.testing) const SizedBox(height: 20),
+
           // Main Message
           Container(
             padding: const EdgeInsets.all(20),
@@ -632,10 +745,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
           ),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
           ),
         ],
       ),
@@ -670,7 +780,7 @@ class _LiveTestScreenState extends State<LiveTestScreen>
       case TestPhase.testInstructions:
         return 'INSTRUCTIONS';
       case TestPhase.testing:
-        return 'TESTING IN PROGRESS';
+        return 'TESTING';
       case TestPhase.completed:
         return 'COMPLETED';
     }

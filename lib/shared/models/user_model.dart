@@ -11,6 +11,8 @@ class UserModel {
   final String? aadhaarNumber;
   final bool isVerified;
   final Map<String, dynamic> preferences;
+  final double? height; // in cm
+  final double? weight; // in kg
 
   const UserModel({
     required this.id,
@@ -25,6 +27,8 @@ class UserModel {
     this.aadhaarNumber,
     this.isVerified = false,
     this.preferences = const {},
+    this.height,
+    this.weight,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +45,8 @@ class UserModel {
       aadhaarNumber: json['aadhaarNumber'] as String?,
       isVerified: json['isVerified'] as bool? ?? false,
       preferences: json['preferences'] as Map<String, dynamic>? ?? {},
+      height: json['height'] as double?,
+      weight: json['weight'] as double?,
     );
   }
 
@@ -58,6 +64,8 @@ class UserModel {
       'aadhaarNumber': aadhaarNumber,
       'isVerified': isVerified,
       'preferences': preferences,
+      'height': height,
+      'weight': weight,
     };
   }
 
@@ -74,6 +82,8 @@ class UserModel {
     String? aadhaarNumber,
     bool? isVerified,
     Map<String, dynamic>? preferences,
+    double? height,
+    double? weight,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -88,6 +98,8 @@ class UserModel {
       aadhaarNumber: aadhaarNumber ?? this.aadhaarNumber,
       isVerified: isVerified ?? this.isVerified,
       preferences: preferences ?? this.preferences,
+      height: height ?? this.height,
+      weight: weight ?? this.weight,
     );
   }
 

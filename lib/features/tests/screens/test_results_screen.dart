@@ -35,9 +35,15 @@ class _TestResultsScreenState extends State<TestResultsScreen>
       orElse: () => MockData.mockTestDefinitions.first,
     );
 
-    _testResult = MockData.mockTestResults.firstWhere(
-      (test) => test.testId.contains(widget.testId),
-      orElse: () => TestResultModel(
+    final testResults = MockData.mockTestResults
+        .where((test) => test.testId.contains(widget.testId))
+        .toList();
+
+    if (testResults.isNotEmpty) {
+      testResults.sort((a, b) => b.completedAt.compareTo(a.completedAt));
+      _testResult = testResults.first;
+    } else {
+      _testResult = TestResultModel(
         testId: '${widget.testId}_1',
         testName: _testDefinition?['name'] ?? 'Test',
         testType: TestType.pushUps,
@@ -45,8 +51,8 @@ class _TestResultsScreenState extends State<TestResultsScreen>
         percentile: 0,
         completedAt: DateTime.now(),
         status: TestStatus.completed,
-      ),
-    );
+      );
+    }
 
     _resultsController = AnimationController(
       duration: const Duration(milliseconds: 1000),

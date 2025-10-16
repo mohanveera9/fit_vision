@@ -19,7 +19,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
   final _phoneController = TextEditingController();
   final _ageController = TextEditingController();
   final _genderController = TextEditingController();
-  
+
   String _selectedGender = 'Male';
   bool _isLoading = false;
 
@@ -108,7 +108,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () =>context.go('/welcome'),
+          onPressed: () => context.go('/welcome'),
         ),
       ),
       body: SafeArea(
@@ -121,7 +121,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
               children: [
                 // Progress Indicator
                 _buildProgressIndicator(),
-                
+
                 const SizedBox(height: AppDimensions.spacing32),
 
                 // Title
@@ -133,9 +133,9 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                     color: AppColors.onSurface,
                   ),
                 ),
-                
+
                 const SizedBox(height: AppDimensions.spacing8),
-                
+
                 const Text(
                   'Tell us a bit about yourself to create your profile',
                   style: TextStyle(
@@ -143,7 +143,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                     color: AppColors.onSurfaceVariant,
                   ),
                 ),
-                
+
                 const SizedBox(height: AppDimensions.spacing32),
 
                 // Form Fields
@@ -155,7 +155,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                   isRequired: true,
                   prefixIcon: const Icon(Icons.person_outline),
                 ),
-                
+
                 const SizedBox(height: AppDimensions.spacing20),
 
                 CustomTextField(
@@ -167,7 +167,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                   isRequired: true,
                   prefixIcon: const Icon(Icons.email_outlined),
                 ),
-                
+
                 const SizedBox(height: AppDimensions.spacing20),
 
                 CustomTextField(
@@ -179,7 +179,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                   isRequired: true,
                   prefixIcon: const Icon(Icons.phone_outlined),
                 ),
-                
+
                 const SizedBox(height: AppDimensions.spacing20),
 
                 Row(
@@ -195,9 +195,9 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                         prefixIcon: const Icon(Icons.cake_outlined),
                       ),
                     ),
-                    
+
                     const SizedBox(width: AppDimensions.spacing16),
-                    
+
                     Expanded(
                       child: CustomDropdownField<String>(
                         label: 'Gender',
@@ -219,7 +219,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: AppDimensions.spacing40),
 
                 // Terms and Privacy
@@ -227,7 +227,9 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                   padding: const EdgeInsets.all(AppDimensions.spacing16),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceVariant.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusSmall,
+                    ),
                   ),
                   child: const Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +252,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: AppDimensions.spacing32),
 
                 // Next Button
@@ -276,7 +278,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Step 1 of 3',
+              'Step 1 of 5',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -284,7 +286,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
               ),
             ),
             Text(
-              '33%',
+              '20%',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -295,7 +297,7 @@ class _NameEntryScreenState extends State<NameEntryScreen> {
         ),
         SizedBox(height: AppDimensions.spacing8),
         LinearProgressIndicator(
-          value: 0.33,
+          value: 0.2,
           backgroundColor: AppColors.surfaceVariant,
           valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
         ),

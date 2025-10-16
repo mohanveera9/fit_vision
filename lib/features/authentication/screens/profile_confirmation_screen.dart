@@ -8,7 +8,8 @@ class ProfileConfirmationScreen extends StatefulWidget {
   const ProfileConfirmationScreen({super.key});
 
   @override
-  State<ProfileConfirmationScreen> createState() => _ProfileConfirmationScreenState();
+  State<ProfileConfirmationScreen> createState() =>
+      _ProfileConfirmationScreenState();
 }
 
 class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
@@ -24,40 +25,29 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _checkmarkController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _cardController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
-    _checkmarkAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _checkmarkController,
-      curve: Curves.elasticOut,
-    ));
+    _checkmarkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _checkmarkController, curve: Curves.elasticOut),
+    );
 
-    _cardAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _cardController,
-      curve: Curves.easeOutBack,
-    ));
+    _cardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _cardController, curve: Curves.easeOutBack),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _cardController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _cardController, curve: Curves.easeOutCubic),
+        );
 
     _startAnimations();
   }
@@ -96,11 +86,6 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
           padding: const EdgeInsets.all(AppDimensions.spacing24),
           child: Column(
             children: [
-              const SizedBox(height: AppDimensions.spacing32),
-
-              // Progress Indicator
-              _buildProgressIndicator(),
-              
               const SizedBox(height: AppDimensions.spacing40),
 
               // Success Checkmark Animation
@@ -132,7 +117,7 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
                   );
                 },
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing32),
 
               // Title
@@ -145,9 +130,9 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing12),
-              
+
               const Text(
                 'Your account has been set up and verified',
                 style: TextStyle(
@@ -156,7 +141,7 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing40),
 
               // Profile Card
@@ -172,12 +157,12 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
                   );
                 },
               ),
-              
+
               const SizedBox(height: AppDimensions.spacing32),
 
               // League Information
               _buildLeagueInfo(),
-              
+
               const SizedBox(height: AppDimensions.spacing40),
 
               // Continue Button
@@ -191,41 +176,6 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildProgressIndicator() {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Step 3 of 3',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.onSurface,
-              ),
-            ),
-            Text(
-              '100%',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primary,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: AppDimensions.spacing8),
-        LinearProgressIndicator(
-          value: 1.0,
-          backgroundColor: AppColors.surfaceVariant,
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.success),
-        ),
-      ],
     );
   }
 
@@ -254,38 +204,31 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
               color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(40),
             ),
-            child: const Icon(
-              Icons.person,
-              size: 40,
-              color: AppColors.primary,
-            ),
+            child: const Icon(Icons.person, size: 40, color: AppColors.primary),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacing16),
-          
+
           // Name
           const Text(
-            'Arjun Singh',
+            'Priya Sharma',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: AppColors.onSurface,
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacing8),
-          
+
           // Email
           const Text(
-            'arjun.singh@email.com',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.onSurfaceVariant,
-            ),
+            'priya.sharma@email.com',
+            style: TextStyle(fontSize: 14, color: AppColors.onSurfaceVariant),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacing16),
-          
+
           // Profile Details
           Row(
             children: [
@@ -293,21 +236,43 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
                 child: _buildDetailItem(
                   icon: Icons.cake,
                   label: 'Age',
-                  value: '24 years',
+                  value: '21 years',
                 ),
               ),
               Expanded(
                 child: _buildDetailItem(
                   icon: Icons.person,
                   label: 'Gender',
-                  value: 'Male',
+                  value: 'Female',
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: AppDimensions.spacing16),
-          
+
+          // Height and Weight Details
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailItem(
+                  icon: Icons.height,
+                  label: 'Height',
+                  value: '175 cm',
+                ),
+              ),
+              Expanded(
+                child: _buildDetailItem(
+                  icon: Icons.monitor_weight,
+                  label: 'Weight',
+                  value: '70 kg',
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: AppDimensions.spacing16),
+
           // League Chip
           Container(
             padding: const EdgeInsets.symmetric(
@@ -321,11 +286,7 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.emoji_events,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
+                Icon(Icons.emoji_events, color: AppColors.primary, size: 16),
                 SizedBox(width: AppDimensions.spacing8),
                 Text(
                   'Youth League (18-25)',
@@ -350,11 +311,7 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
   }) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: AppColors.primary,
-          size: 20,
-        ),
+        Icon(icon, color: AppColors.primary, size: 20),
         const SizedBox(height: AppDimensions.spacing4),
         Text(
           label,
@@ -385,11 +342,7 @@ class _ProfileConfirmationScreenState extends State<ProfileConfirmationScreen>
       ),
       child: const Row(
         children: [
-          Icon(
-            Icons.info_outline,
-            color: AppColors.secondary,
-            size: 20,
-          ),
+          Icon(Icons.info_outline, color: AppColors.secondary, size: 20),
           SizedBox(width: AppDimensions.spacing12),
           Expanded(
             child: Text(

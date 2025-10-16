@@ -103,7 +103,6 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
             // Tests Grid
             _buildTestsGrid(),
 
-            // Change Height and Weight Section
             _buildChangeHeightWeightSection(),
 
             const SizedBox(height: AppDimensions.spacing24),
@@ -489,7 +488,6 @@ class _TestSelectionScreenState extends State<TestSelectionScreen>
       child: GestureDetector(
         onTap: _toggleVisibilityMode,
         child: Container(
-          
           child: Row(
             children: [
               Icon(

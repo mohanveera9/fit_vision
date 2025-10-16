@@ -105,7 +105,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Step 2 of 3',
+              'Step 2 of 5',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -113,7 +113,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
               ),
             ),
             Text(
-              '67%',
+              '40%',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -124,7 +124,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
         ),
         SizedBox(height: AppDimensions.spacing8),
         LinearProgressIndicator(
-          value: 0.67,
+          value: 0.4,
           backgroundColor: AppColors.surfaceVariant,
           valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
         ),
@@ -449,7 +449,7 @@ class _AadhaarUploadScreenState extends State<AadhaarUploadScreen> {
         setState(() {
           _isLoading = false;
         });
-        context.go('/register/confirm');
+        context.go('/register/face-verification');
       }
     });
   }
